@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hotel Revenue Optimization Dashboard</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- FontAwesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Login Container */
+    #loginContainer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      width: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 2000;
+      background: url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    .login-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.7);
+      z-index: 1;
+    }
+
+    /* Navbar */
+    .navbar {
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 15px 0;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      display: none; /* Hidden by default, shown after login */
+    }
+
+    .navbar-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      padding: 10px 15px;
+      font-size: 16px;
+      transition: background-color 0.3s;
+      border-radius: 5px;
+    }
+
+    .nav-links a:hover {
+      background-color: #16a085;
+    }
+
+    .nav-links a i {
+      margin-right: 8px;
+    }
+
+    /* Main content */
+    .main-content {
+      margin-top: 70px; /* Account for navbar */
+      padding: 20px;
+      flex-grow: 1;
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.9);
+      min-height: calc(100vh - 70px);
+      display: none; /* Hidden by default, shown after login */
+    }
+
+    .dashboard-container {
+      padding: 30px;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    .btn-primary {
+      background-color: #1abc9c;
+      border: none;
+      border-radius: 10px;
+      padding: 10px;
+      font-weight: 500;
+    }
+
+    .btn-primary:hover {
+      background-color: #16a085;
+    }
+
+    /* Chart Container */
+    .chart-container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      height: calc(100vh - 200px);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* NEW: Guest Preferences Card */
+    .pref-card {
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    .pref-badge {
+      background: #1abc9c;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      margin-right: 8px;
+      margin-bottom: 8px;
+      display: inline-block;
+    }
+
+    iframe {
+      width: 100%;
+      height: calc(100vh - 150px);
+      border: none;
+    }
+
+    #logoutBtn {
+      background-color: #e74c3c;
+      padding: 10px 15px;
+      border-radius: 5px;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    #logoutBtn:hover {
+      background-color: #c0392b;
+    }
+
+    /* Admin Management Heading */
+    .admin-heading {
+      text-align: center;
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 30px;
+      color: #2c3e50;
+    }
+
+    /* Login Form */
+    .login-form {
+      width: 100%;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      position: relative;
+      z-index: 2;
+    }
+
+    .login-form input {
+      margin-bottom: 15px;
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    .login-form button {
+      width: 100%;
+      padding: 10px;
+      background-color: #1abc9c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+
+    .footer-note {
+      text-align: center;
+      margin-top: 20px;
+      color: #7f8c8d;
+    }
+
+    /* Modal Styling */
+    .modal-content {
+      border-radius: 10px;
+    }
+
+    /* Chart sizes */
+    .chart-wrapper {
+      width: 100%;
+      height: 100%;
+      max-height: calc(100vh - 250px);
+      margin: 0 auto;
+    }
+
+    /* Footer Styling */
+    footer {
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-size: 14px;
+      margin-top: auto;
+      display: none; /* Hidden by default, shown after login */
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- Login Page -->
+<div id="loginContainer">
+  <div class="login-overlay"></div>
+  <div class="login-form">
+    <h2 class="text-center mb-4">Hotel Management Login</h2>
+    <h3 class="text-center mb-4">Admin Login</h3>
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="Username" required class="form-control"/>
+      <input type="password" id="password" placeholder="Password" required class="form-control"/>
+      <button type="submit" class="btn btn-primary mt-3">Login</button>
+    </form>
+    <div class="footer-note">
+      Forgot your password? <a href="#" data-bs-toggle="modal" data-bs-target="#resetModal">Reset here</a>
+    </div>
+  </div>
+</div>
+
+<!-- Navbar -->
+<nav class="navbar">
+  <div class="navbar-container">
+    <h2 class="mb-0">Admin Dashboard</h2>
+    <div class="nav-links">
+      <a href="#" id="showDashboard"><i class="fas fa-tachometer-alt"></i>Dashboard</a>
+      <a href="#" id="showRevenueTrends"><i class="fas fa-chart-line"></i>Revenue Trends</a>
+      <a href="#" id="showRevenueBreakdown"><i class="fas fa-chart-pie"></i>Revenue Breakdown</a>
+      <a href="#" id="showGuestPreferences"><i class="fas fa-star"></i>Guest Preferences</a>
+      <a href="#" data-bs-toggle="modal" data-bs-target="#serviceModal"><i class="fas fa-headset"></i>Service Recovery</a>
+      <button class="btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i>Logout</button>
+    </div>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div id="mainContent" class="main-content">
+
+  <!-- Dashboard Section -->
+  <div id="dashboardContainer" class="dashboard-container" style="display: block;">
+    <div class="admin-heading">Analytical Dashboard</div>
+    <iframe src="https://us1.ca.analytics.ibm.com/bi/?perspective=dashboard&amp;pathRef=.my_folders%2FNew%2Bdashboard&amp;closeWindowOnLastView=true&amp;ui_appbar=false&amp;ui_navbar=false&amp;shareMode=embedded&amp;action=view&amp;mode=dashboard&amp;subView=model00000195a8ae7cfc_00000001" allowfullscreen></iframe>
+  </div>
+
+  <!-- Revenue Trends Section -->
+  <div id="revenueTrendsContainer" class="container" style="display: none;">
+    <div class="admin-heading">Hotel Revenue Analytics</div>
+    <div class="chart-container">
+      <h3><i class="fas fa-chart-line me-2"></i>Revenue Trends Over Months</h3>
+      <div class="chart-wrapper">
+        <canvas id="revenueTrendsChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Revenue Breakdown Section -->
+  <div id="revenueBreakdownContainer" class="container" style="display: none;">
+    <div class="admin-heading">Hotel Revenue Analytics</div>
+    <div class="chart-container">
+      <h3><i class="fas fa-chart-pie me-2"></i>Room Revenue Breakdown</h3>
+      <div class="chart-wrapper">
+        <canvas id="revenueBreakdownChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEW: Guest Preferences Section -->
+  <div id="guestPreferencesContainer" class="container" style="display: none;">
+    <div class="admin-heading">Guest Experience Analytics</div>
+    
+    <div class="row">
+      <div class="col-md-6">
+        <div class="chart-container">
+          <h3><i class="fas fa-star me-2"></i>Top Guest Preferences</h3>
+          <div class="chart-wrapper">
+            <canvas id="guestPreferenceChart"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="chart-container">
+          <h3><i class="fas fa-users me-2"></i>Recent Guest Requests</h3>
+          <div class="pref-card">
+            <h5>Room 302 - VIP Suite</h5>
+            <div>
+              <span class="pref-badge">Late Check-out</span>
+              <span class="pref-badge">Extra Pillows</span>
+              <span class="pref-badge">Champagne</span>
+            </div>
+          </div>
+          
+          <div class="pref-card">
+            <h5>Room 115 - Double</h5>
+            <div>
+              <span class="pref-badge">Early Check-in</span>
+              <span class="pref-badge">Airport Transfer</span>
+            </div>
+          </div>
+          
+          <div class="pref-card">
+            <h5>Room 204 - Single</h5>
+            <div>
+              <span class="pref-badge">Wake-up Call</span>
+              <span class="pref-badge">Newspaper</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal for Reset Password -->
+<div class="modal fade" id="resetModal" tabindex="-1" aria-labelledby="resetModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="resetModalLabel">Reset Your Password</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Please contact the admin for password reset instructions.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NEW: Service Recovery Modal -->
+<div class="modal fade" id="serviceModal" tabindex="-1" aria-labelledby="serviceModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="serviceModalLabel"><i class="fas fa-headset me-2"></i>Service Recovery</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="mb-3">
+            <label class="form-label">Room Number</label>
+            <input type="text" class="form-control" placeholder="e.g., 302">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Issue Type</label>
+            <select class="form-select">
+              <option>Housekeeping</option>
+              <option>Noise Complaint</option>
+              <option>Amenity Request</option>
+              <option>Maintenance</option>
+              <option>Billing Issue</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Details</label>
+            <textarea class="form-control" rows="3" placeholder="Describe the issue..."></textarea>
+          </div>
+          <button type="button" class="btn btn-primary w-100">Submit Request</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div>
+    <p><strong>Contact Us</strong></p>
+    <p>Email: support@hotelmanagement.com | Phone: +1 (123) 456-7890</p>
+    <p>123 Hotel Street, Cityville, Country</p>
+    <p>© 2025 Hotel Management System. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  // Valid Credentials
+  const validCredentials = [
+    { username: "Kumaran", password: "2411" },
+    { username: "Devadharshini", password: "Devadharshini" },
+    { username: "Aldan", password: "Aldan" }
+  ];
+
+  // Initialize variables for charts
+  let revenueTrendsChart, revenueBreakdownChart, guestPreferenceChart;
+
+  // Handle login
+  document.getElementById("loginForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+    
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    const user = validCredentials.find(user => user.username === username && user.password === password);
+
+    if (user) {
+      // Hide login form and show navbar + content + footer
+      document.getElementById("loginContainer").style.display = "none";
+      document.querySelector(".navbar").style.display = "block";
+      document.getElementById("mainContent").style.display = "block";
+      document.querySelector("footer").style.display = "block";
+      
+      // Initialize charts after login
+      initializeCharts();
+    } else {
+      alert("Invalid username or password.");
+    }
+  });
+
+  // Switch between sections
+  document.getElementById("showDashboard").addEventListener("click", function(e) {
+    e.preventDefault();
+    showSection('dashboardContainer');
+  });
+
+  document.getElementById("showRevenueTrends").addEventListener("click", function(e) {
+    e.preventDefault();
+    showSection('revenueTrendsContainer');
+  });
+
+  document.getElementById("showRevenueBreakdown").addEventListener("click", function(e) {
+    e.preventDefault();
+    showSection('revenueBreakdownContainer');
+  });
+
+  // NEW: Guest Preferences Section
+  document.getElementById("showGuestPreferences").addEventListener("click", function(e) {
+    e.preventDefault();
+    showSection('guestPreferencesContainer');
+  });
+
+  function showSection(sectionId) {
+    // Hide all sections
+    document.getElementById("dashboardContainer").style.display = "none";
+    document.getElementById("revenueTrendsContainer").style.display = "none";
+    document.getElementById("revenueBreakdownContainer").style.display = "none";
+    document.getElementById("guestPreferencesContainer").style.display = "none";
+    
+    // Show selected section
+    document.getElementById(sectionId).style.display = "block";
+  }
+
+  // Logout functionality
+  document.getElementById("logoutBtn").addEventListener("click", function(e) {
+    e.preventDefault();
+    logout();
+  });
+
+  function logout() {
+    document.getElementById("loginContainer").style.display = "flex";
+    document.querySelector(".navbar").style.display = "none";
+    document.getElementById("mainContent").style.display = "none";
+    document.querySelector("footer").style.display = "none";
+    // Reset form
+    document.getElementById("loginForm").reset();
+    
+    // Destroy charts if they exist
+    if (revenueTrendsChart) {
+      revenueTrendsChart.destroy();
+    }
+    if (revenueBreakdownChart) {
+      revenueBreakdownChart.destroy();
+    }
+    if (guestPreferenceChart) {
+      guestPreferenceChart.destroy();
+    }
+  }
+
+  // Initialize charts after DOM is loaded and user is logged in
+  function initializeCharts() {
+    // Revenue Trends Chart
+    const revenueTrendsCtx = document.getElementById('revenueTrendsChart').getContext('2d');
+    revenueTrendsChart = new Chart(revenueTrendsCtx, {
+      type: 'line',
+      data: {
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        datasets: [{
+          label: 'Monthly Revenue (in USD)',
+          data: [20000, 25000, 30000, 27000, 32000, 35000, 38000],
+          fill: false,
+          borderColor: '#1abc9c',
+          backgroundColor: '#1abc9c',
+          tension: 0.4,
+          borderWidth: 3
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return context.dataset.label + ': $' + context.raw.toLocaleString();
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: 'Month',
+              color: '#2c3e50',
+              font: {
+                weight: 'bold'
+              }
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Revenue (USD)',
+              color: '#2c3e50',
+              font: {
+                weight: 'bold'
+              }
+            },
+            ticks: {
+              callback: function(value) {
+                return '$' + value.toLocaleString();
+              }
+            }
+          }
+        }
+      }
+    });
+
+    // Revenue Breakdown Pie Chart
+    const revenueBreakdownCtx = document.getElementById('revenueBreakdownChart').getContext('2d');
+    revenueBreakdownChart = new Chart(revenueBreakdownCtx, {
+      type: 'pie',
+      data: {
+        labels: ['Single Rooms', 'Double Rooms', 'Suites'],
+        datasets: [{
+          data: [50000, 75000, 40000],
+          backgroundColor: [
+            '#3498db',
+            '#2ecc71',
+            '#e74c3c'
+          ],
+          borderWidth: 1,
+          hoverOffset: 10
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right',
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                const label = context.label || '';
+                const value = context.raw || 0;
+                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                const percentage = Math.round((value / total) * 100);
+                return `${label}: $${value.toLocaleString()} (${percentage}%)`;
+              }
+            }
+          }
+        }
+      }
+    });
+
+    // NEW: Guest Preference Chart
+    const prefCtx = document.getElementById('guestPreferenceChart').getContext('2d');
+    guestPreferenceChart = new Chart(prefCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Late Check-out', 'Sea View', 'Airport Shuttle', 'Early Check-in', 'Extra Bed'],
+        datasets: [{
+          label: 'Number of Requests',
+          data: [65, 50, 40, 35, 25],
+          backgroundColor: '#9b59b6'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context) {
+                return context.dataset.label + ': ' + context.raw;
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Number of Requests',
+              color: '#2c3e50',
+              font: {
+                weight: 'bold'
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+</script>
+
+</body>
+</html>

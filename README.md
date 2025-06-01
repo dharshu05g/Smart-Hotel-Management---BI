@@ -14,8 +14,8 @@ The HTML page serves as a prototype interface for showcasing the outputs of our 
 
 ## 👨‍💻 Team Members
 
-- **[Devadharshini G]** (927623BAD018)
 - **[Aldan L.M Gehon]** (927623BAD005)
+- **[Devadharshini G]** (927623BAD018)
 - **[Kumaran K]** (927623BAD053)
 
 ## 📂 Repository Contents

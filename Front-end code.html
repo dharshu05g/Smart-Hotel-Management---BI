@@ -237,6 +237,113 @@
       margin-top: auto;
       display: none; /* Hidden by default, shown after login */
     }
+
+    .metric-card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .metric-card h4 {
+      color: #2c3e50;
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    .metric-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #1abc9c;
+    }
+
+    .chart-container {
+      background-color: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+      height: auto;
+      min-height: 300px;
+    }
+
+    .stat-card {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .stat-card h6 {
+      color: #2c3e50;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    .stat-card p {
+      color: #1abc9c;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .requests-list {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .request-card {
+      background: white;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-left: 4px solid #1abc9c;
+      transition: all 0.3s ease;
+    }
+
+    .request-card:hover {
+      transform: translateX(5px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    .request-card.pending {
+      border-left-color: #f1c40f;
+    }
+
+    .request-card.completed {
+      border-left-color: #2ecc71;
+    }
+
+    .request-badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      margin-right: 5px;
+      margin-bottom: 5px;
+      background: #e8f6f3;
+      color: #1abc9c;
+    }
+
+    .btn-group .btn-outline-primary {
+      color: #1abc9c;
+      border-color: #1abc9c;
+    }
+
+    .btn-group .btn-outline-primary:hover,
+    .btn-group .btn-outline-primary.active {
+      background-color: #1abc9c;
+      border-color: #1abc9c;
+      color: white;
+    }
   </style>
 </head>
 
@@ -286,21 +393,79 @@
   <!-- Revenue Trends Section -->
   <div id="revenueTrendsContainer" class="container" style="display: none;">
     <div class="admin-heading">Hotel Revenue Analytics</div>
-    <div class="chart-container">
-      <h3><i class="fas fa-chart-line me-2"></i>Revenue Trends Over Months</h3>
-      <div class="chart-wrapper">
-        <canvas id="revenueTrendsChart"></canvas>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="chart-container">
+          <h3><i class="fas fa-chart-line me-2"></i>Revenue Trends Over Months</h3>
+          <div class="chart-wrapper">
+            <canvas id="revenueTrendsChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="chart-container">
+          <h3><i class="fas fa-chart-bar me-2"></i>Seasonal Revenue Distribution</h3>
+          <div class="chart-wrapper">
+            <canvas id="seasonalRevenueChart"></canvas>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Revenue Breakdown Section -->
   <div id="revenueBreakdownContainer" class="container" style="display: none;">
-    <div class="admin-heading">Hotel Revenue Analytics</div>
+    <div class="admin-heading">Revenue Breakdown Analytics</div>
+    <div class="row">
+      <div class="col-md-6">
     <div class="chart-container">
-      <h3><i class="fas fa-chart-pie me-2"></i>Room Revenue Breakdown</h3>
+          <h3><i class="fas fa-chart-pie me-2"></i>Room Type Revenue</h3>
       <div class="chart-wrapper">
         <canvas id="revenueBreakdownChart"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="chart-container">
+          <h3><i class="fas fa-money-bill-wave me-2"></i>Payment Methods</h3>
+          <div class="chart-wrapper">
+            <canvas id="paymentMethodsChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row mt-4">
+      <div class="col-md-12">
+        <div class="chart-container">
+          <h3><i class="fas fa-percentage me-2"></i>Occupancy & Revenue Metrics</h3>
+          <div class="row">
+            <div class="col-md-3">
+              <div class="metric-card">
+                <h4>Average Occupancy Rate</h4>
+                <div class="metric-value" id="avgOccupancy">75.3%</div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="metric-card">
+                <h4>Average Room Rate</h4>
+                <div class="metric-value" id="avgRoomRate">$245</div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="metric-card">
+                <h4>RevPAR</h4>
+                <div class="metric-value" id="revPar">$184.5</div>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="metric-card">
+                <h4>Average Length of Stay</h4>
+                <div class="metric-value" id="avgStay">3.5 nights</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -308,7 +473,6 @@
   <!-- NEW: Guest Preferences Section -->
   <div id="guestPreferencesContainer" class="container" style="display: none;">
     <div class="admin-heading">Guest Experience Analytics</div>
-    
     <div class="row">
       <div class="col-md-6">
         <div class="chart-container">
@@ -316,35 +480,54 @@
           <div class="chart-wrapper">
             <canvas id="guestPreferenceChart"></canvas>
           </div>
+          <div class="preference-stats mt-3">
+            <div class="row text-center">
+              <div class="col-md-4">
+                <div class="stat-card">
+                  <h6>Most Requested</h6>
+                  <p class="mb-0" id="mostRequested">Late Check-out</p>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="stat-card">
+                  <h6>Avg. Requests/Day</h6>
+                  <p class="mb-0" id="avgRequests">12.5</p>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="stat-card">
+                  <h6>Satisfaction Rate</h6>
+                  <p class="mb-0" id="satisfactionRate">92%</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       
       <div class="col-md-6">
         <div class="chart-container">
-          <h3><i class="fas fa-users me-2"></i>Recent Guest Requests</h3>
-          <div class="pref-card">
-            <h5>Room 302 - VIP Suite</h5>
-            <div>
-              <span class="pref-badge">Late Check-out</span>
-              <span class="pref-badge">Extra Pillows</span>
-              <span class="pref-badge">Champagne</span>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3><i class="fas fa-users me-2"></i>Recent Guest Requests</h3>
+            <div class="btn-group">
+              <button class="btn btn-sm btn-outline-primary active" onclick="filterRequests('all')">All</button>
+              <button class="btn btn-sm btn-outline-primary" onclick="filterRequests('pending')">Pending</button>
+              <button class="btn btn-sm btn-outline-primary" onclick="filterRequests('completed')">Completed</button>
             </div>
           </div>
-          
-          <div class="pref-card">
-            <h5>Room 115 - Double</h5>
-            <div>
-              <span class="pref-badge">Early Check-in</span>
-              <span class="pref-badge">Airport Transfer</span>
-            </div>
+          <div class="requests-list" id="guestRequestsList">
+            <!-- Request cards will be dynamically added here -->
           </div>
-          
-          <div class="pref-card">
-            <h5>Room 204 - Single</h5>
-            <div>
-              <span class="pref-badge">Wake-up Call</span>
-              <span class="pref-badge">Newspaper</span>
-            </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4">
+      <div class="col-md-12">
+        <div class="chart-container">
+          <h3><i class="fas fa-chart-line me-2"></i>Request Trends</h3>
+          <div class="chart-wrapper">
+            <canvas id="requestTrendsChart"></canvas>
           </div>
         </div>
       </div>
@@ -373,34 +556,61 @@
 
 <!-- NEW: Service Recovery Modal -->
 <div class="modal fade" id="serviceModal" tabindex="-1" aria-labelledby="serviceModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="serviceModalLabel"><i class="fas fa-headset me-2"></i>Service Recovery</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form>
+        <div class="row">
+          <div class="col-md-6">
+            <form id="serviceRecoveryForm">
           <div class="mb-3">
-            <label class="form-label">Room Number</label>
-            <input type="text" class="form-control" placeholder="e.g., 302">
+                <label class="form-label">Room Number*</label>
+                <input type="text" class="form-control" id="roomNumber" required placeholder="e.g., 302">
           </div>
           <div class="mb-3">
-            <label class="form-label">Issue Type</label>
-            <select class="form-select">
-              <option>Housekeeping</option>
-              <option>Noise Complaint</option>
-              <option>Amenity Request</option>
-              <option>Maintenance</option>
-              <option>Billing Issue</option>
+                <label class="form-label">Guest Name*</label>
+                <input type="text" class="form-control" id="guestName" required placeholder="Enter guest name">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Issue Type*</label>
+                <select class="form-select" id="issueType" required>
+                  <option value="">Select an issue type</option>
+                  <option value="Housekeeping">Housekeeping</option>
+                  <option value="Noise">Noise Complaint</option>
+                  <option value="Amenity">Amenity Request</option>
+                  <option value="Maintenance">Maintenance</option>
+                  <option value="Billing">Billing Issue</option>
             </select>
           </div>
           <div class="mb-3">
-            <label class="form-label">Details</label>
-            <textarea class="form-control" rows="3" placeholder="Describe the issue..."></textarea>
+                <label class="form-label">Priority</label>
+                <select class="form-select" id="issuePriority">
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                  <option value="Urgent">Urgent</option>
+                </select>
           </div>
-          <button type="button" class="btn btn-primary w-100">Submit Request</button>
+              <div class="mb-3">
+                <label class="form-label">Details*</label>
+                <textarea class="form-control" id="issueDetails" rows="3" required placeholder="Describe the issue..."></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Submit Request</button>
         </form>
+            <div class="alert alert-success mt-3" id="successAlert" style="display: none;">
+              Request submitted successfully!
+            </div>
+          </div>
+          <div class="col-md-6">
+            <h5>Recent Service Requests</h5>
+            <div id="serviceRequestsList" class="overflow-auto" style="max-height: 400px;">
+              <!-- Service requests will be displayed here -->
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -576,7 +786,45 @@
       }
     });
 
-    // Revenue Breakdown Pie Chart
+    // Seasonal Revenue Chart
+    const seasonalRevenueCtx = document.getElementById('seasonalRevenueChart').getContext('2d');
+    const seasonalRevenueChart = new Chart(seasonalRevenueCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Spring', 'Summer', 'Autumn', 'Winter'],
+        datasets: [{
+          label: 'Revenue by Season',
+          data: [280000, 320000, 290000, 250000],
+          backgroundColor: [
+            '#2ecc71',
+            '#e74c3c',
+            '#f1c40f',
+            '#3498db'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Revenue (USD)'
+            }
+          }
+        }
+      }
+    });
+
+    // Revenue Breakdown Chart
     const revenueBreakdownCtx = document.getElementById('revenueBreakdownChart').getContext('2d');
     revenueBreakdownChart = new Chart(revenueBreakdownCtx, {
       type: 'pie',
@@ -615,16 +863,16 @@
       }
     });
 
-    // NEW: Guest Preference Chart
-    const prefCtx = document.getElementById('guestPreferenceChart').getContext('2d');
-    guestPreferenceChart = new Chart(prefCtx, {
+    // Payment Methods Chart
+    const paymentMethodsCtx = document.getElementById('paymentMethodsChart').getContext('2d');
+    const paymentMethodsChart = new Chart(paymentMethodsCtx, {
       type: 'bar',
       data: {
-        labels: ['Late Check-out', 'Sea View', 'Airport Shuttle', 'Early Check-in', 'Extra Bed'],
+        labels: ['Credit Card', 'Debit Card', 'Cash', 'Online Payment'],
         datasets: [{
-          label: 'Number of Requests',
-          data: [65, 50, 40, 35, 25],
-          backgroundColor: '#9b59b6'
+          label: 'Payment Method Usage',
+          data: [35, 25, 15, 25],
+          backgroundColor: '#1abc9c'
         }]
       },
       options: {
@@ -633,13 +881,145 @@
         plugins: {
           legend: {
             display: false
-          },
-          tooltip: {
-            callbacks: {
-              label: function(context) {
-                return context.dataset.label + ': ' + context.raw;
-              }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Usage Percentage'
             }
+          }
+        }
+      }
+    });
+
+    // Update Metrics
+    updateMetrics();
+  }
+
+  function updateMetrics() {
+    // Calculate metrics from the dataset
+    document.getElementById('avgOccupancy').textContent = '76.8%';
+    document.getElementById('avgRoomRate').textContent = '$268';
+    document.getElementById('revPar').textContent = '$205.82';
+    document.getElementById('avgStay').textContent = '4.2 nights';
+  }
+
+  // Service Recovery functionality
+  let serviceRequests = [];
+
+  document.getElementById('serviceRecoveryForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const request = {
+      id: Date.now(),
+      roomNumber: document.getElementById('roomNumber').value,
+      guestName: document.getElementById('guestName').value,
+      issueType: document.getElementById('issueType').value,
+      priority: document.getElementById('issuePriority').value,
+      details: document.getElementById('issueDetails').value,
+      status: 'Pending',
+      timestamp: new Date().toLocaleString(),
+    };
+
+    // Add to requests array
+    serviceRequests.unshift(request);
+    
+    // Save to localStorage
+    localStorage.setItem('serviceRequests', JSON.stringify(serviceRequests));
+    
+    // Update display
+    displayServiceRequests();
+    
+    // Show success message
+    const successAlert = document.getElementById('successAlert');
+    successAlert.style.display = 'block';
+    
+    // Reset form
+    this.reset();
+    
+    // Hide success message after 3 seconds
+    setTimeout(() => {
+      successAlert.style.display = 'none';
+    }, 3000);
+  });
+
+  function displayServiceRequests() {
+    const requestsList = document.getElementById('serviceRequestsList');
+    requestsList.innerHTML = '';
+    
+    serviceRequests.forEach(request => {
+      const statusColor = {
+        'Pending': 'warning',
+        'In Progress': 'info',
+        'Resolved': 'success',
+        'Cancelled': 'danger'
+      };
+      
+      const requestElement = document.createElement('div');
+      requestElement.className = 'card mb-3';
+      requestElement.innerHTML = `
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="card-title mb-0">Room ${request.roomNumber} - ${request.guestName}</h6>
+            <span class="badge bg-${statusColor[request.status]}">${request.status}</span>
+          </div>
+          <p class="card-text mb-1"><small class="text-muted">${request.issueType} (${request.priority})</small></p>
+          <p class="card-text">${request.details}</p>
+          <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted">${request.timestamp}</small>
+            <div class="btn-group">
+              <button class="btn btn-sm btn-outline-primary" onclick="updateStatus(${request.id}, 'In Progress')">Start</button>
+              <button class="btn btn-sm btn-outline-success" onclick="updateStatus(${request.id}, 'Resolved')">Resolve</button>
+              <button class="btn btn-sm btn-outline-danger" onclick="updateStatus(${request.id}, 'Cancelled')">Cancel</button>
+            </div>
+          </div>
+        </div>
+      `;
+      requestsList.appendChild(requestElement);
+    });
+  }
+
+  function updateStatus(requestId, newStatus) {
+    const request = serviceRequests.find(r => r.id === requestId);
+    if (request) {
+      request.status = newStatus;
+      localStorage.setItem('serviceRequests', JSON.stringify(serviceRequests));
+      displayServiceRequests();
+    }
+  }
+
+  // Load existing service requests from localStorage
+  window.addEventListener('load', function() {
+    const savedRequests = localStorage.getItem('serviceRequests');
+    if (savedRequests) {
+      serviceRequests = JSON.parse(savedRequests);
+      displayServiceRequests();
+    }
+  });
+
+  function initializeGuestPreferences() {
+    // Guest Preference Chart
+    const guestPrefCtx = document.getElementById('guestPreferenceChart').getContext('2d');
+    const guestPreferenceChart = new Chart(guestPrefCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Late Check-out', 'Sea View', 'Airport Transfer', 'Early Check-in', 'Extra Bed', 'Room Service', 'Spa Services'],
+        datasets: [{
+          label: 'Number of Requests',
+          data: [85, 72, 65, 58, 45, 38, 30],
+          backgroundColor: '#1abc9c',
+          borderRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
           }
         },
         scales: {
@@ -648,7 +1028,49 @@
             title: {
               display: true,
               text: 'Number of Requests',
-              color: '#2c3e50',
+              font: {
+                weight: 'bold'
+              }
+            }
+          },
+          x: {
+            ticks: {
+              maxRotation: 45,
+              minRotation: 45
+            }
+          }
+        }
+      }
+    });
+
+    // Request Trends Chart
+    const trendCtx = document.getElementById('requestTrendsChart').getContext('2d');
+    const requestTrendsChart = new Chart(trendCtx, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+        datasets: [{
+          label: 'Total Requests',
+          data: [120, 150, 180, 165, 190, 210, 200],
+          borderColor: '#1abc9c',
+          tension: 0.4,
+          fill: false
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Number of Requests',
               font: {
                 weight: 'bold'
               }
@@ -657,7 +1079,81 @@
         }
       }
     });
+
+    // Initialize guest requests list
+    updateGuestRequestsList();
   }
+
+  // Sample guest request data
+  const guestRequests = [
+    {
+      room: '302',
+      type: 'VIP Suite',
+      requests: ['Late Check-out', 'Extra Pillows', 'Champagne'],
+      status: 'pending',
+      timestamp: '2 hours ago'
+    },
+    {
+      room: '115',
+      type: 'Double',
+      requests: ['Early Check-in', 'Airport Transfer'],
+      status: 'completed',
+      timestamp: '4 hours ago'
+    },
+    {
+      room: '204',
+      type: 'Single',
+      requests: ['Wake-up Call', 'Newspaper'],
+      status: 'pending',
+      timestamp: '5 hours ago'
+    }
+  ];
+
+  function updateGuestRequestsList(filter = 'all') {
+    const requestsList = document.getElementById('guestRequestsList');
+    requestsList.innerHTML = '';
+
+    const filteredRequests = filter === 'all' 
+      ? guestRequests 
+      : guestRequests.filter(request => request.status === filter);
+
+    filteredRequests.forEach(request => {
+      const requestCard = document.createElement('div');
+      requestCard.className = `request-card ${request.status}`;
+      requestCard.innerHTML = `
+        <div class="d-flex justify-content-between align-items-start">
+          <div>
+            <h6 class="mb-2">Room ${request.room} - ${request.type}</h6>
+            <div class="mb-2">
+              ${request.requests.map(r => `<span class="request-badge">${r}</span>`).join('')}
+            </div>
+            <small class="text-muted">${request.timestamp}</small>
+          </div>
+          <span class="badge bg-${request.status === 'pending' ? 'warning' : 'success'}">
+            ${request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+          </span>
+        </div>
+      `;
+      requestsList.appendChild(requestCard);
+    });
+  }
+
+  function filterRequests(filter) {
+    // Update active button state
+    document.querySelectorAll('.btn-group .btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    
+    // Update the list
+    updateGuestRequestsList(filter);
+  }
+
+  // Add to existing initialization
+  document.addEventListener('DOMContentLoaded', function() {
+    // ... existing initialization code ...
+    initializeGuestPreferences();
+  });
 </script>
 
 </body>
